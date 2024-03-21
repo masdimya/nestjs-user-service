@@ -34,7 +34,7 @@ export class UserService {
     const userToUpdate = await this.findOne(options)
     
     if(!userToUpdate){
-      throw 'User Not Found'
+      throw new Error('User Not Found')
     }
 
     userUpdateValidation.parse(data)
@@ -51,7 +51,7 @@ export class UserService {
     const userToDelete = await this.findOne(options)
     
     if(!userToDelete){
-      throw 'User Not Found'
+      throw new Error('User Not Found')
     }
 
     return this.userRepository.softDelete(userToDelete.id);

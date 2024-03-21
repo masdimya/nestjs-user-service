@@ -41,7 +41,13 @@ export class UserController {
   }
 
   @Get(':id')
-  getById(@Param('id') id: number): Promise<UserEntity> {
+  async getById(@Param('id') id: number): Promise<UserEntity> {
+
+    console.log('sdsd', await this.userService.findOne({
+      where: {
+        id: 100
+      }
+    }))
     return this.userService.findOne({
       where: {
         id: id

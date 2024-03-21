@@ -9,7 +9,7 @@ export class User extends BaseEntity{
 	@Column()
 	email: string;
 
-  @Column()
+  @Column({ select: false })
 	password: string;
 
   @Column()
@@ -24,12 +24,10 @@ export class User extends BaseEntity{
   @Column({default:true})
 	active: Boolean;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ select: false })
 	created_at: Date;
 
-	@DeleteDateColumn()
+	@DeleteDateColumn({ select: false })
 	deleted_at: Date;
-
-
   
 }

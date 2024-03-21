@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, FindOneOptions, FindManyOptions, DeleteResult } from 'typeorm';
 
 import { User as UserEntity } from './user.entity'
 
-import {userCreateDTO, userCreateValidation } from './user.dto'
+import {userCreateDTO, userUpdateDTO, userUpdateValidation, userCreateValidation } from './user.dto'
+
 
 @Injectable()
 export class UserService {
@@ -19,65 +20,41 @@ export class UserService {
     return this.userRepository.save(data)
   }
 
-  findOne(id: number): Promise<UserEntity>{
-    return UserEntity.findOne({
-      where: {
-        id: id,
-      },
-    })
+  findOne(options: FindOneOptions<UserEntity>): Promise<UserEntity>{
+    return this.userRepository.findOne(options)
   }
 
 
-  // findAll(): Promise<TransactionEntity[]>{
-  //   return TransactionEntity.find({
-  //     select: [
-  //       'id',
-  //       'trans_name',
-  //       'trans_date',
-  //       'trans_amount'
-  //     ],
-  //     order: {
-  //       trans_date: "ASC",
-  //       created_at: "ASC",
-  //     },
-  //   })
-  // }
+  findAll(options?: FindManyOptions<UserEntity>): Promise<UserEntity[]>{
+    return this.userRepository.find(options)
+  }
 
   
-  // async update(id: number, trans: Transaction): Promise<string>{
-  //   const transaction = await TransactionEntity.findOne({
-  //     where: {
-  //       id: id,
-  //     }
-  //   })
+  async update(options: FindOneOptions<UserEntity>, data: userUpdateDTO): Promise<UserEntity>{
+    const userToUpdate = await this.findOne(options)
+    
+    if(!userToUpdate){
+      throw 'User Not Found'
+    }
+
+    userUpdateValidation.parse(data)
 
 
-  //   if(transaction){
-  //     transaction.trans_name = trans.trans_name
-  //     transaction.trans_date = trans.trans_date 
-  //     transaction.trans_amount = trans.trans_amount
-  
-  //     await transaction.save()
-
-  //   }
-
-
-  //   return 'success update transaction'
-  // }
+    return this.userRepository.save({
+      ...userToUpdate,
+      ...data
+    })
+  }
   
 
-  // async delete(id: number): Promise<string>{
-  //   const transaction = await TransactionEntity.findOne({
-  //     where: {
-  //       id: id,
-  //     }
-  //   })
+  async delete(options: FindOneOptions<UserEntity>): Promise<DeleteResult>{
+    const userToDelete = await this.findOne(options)
+    
+    if(!userToDelete){
+      throw 'User Not Found'
+    }
 
-  //   transaction.deleted_at = new Date()
-  //   await transaction.save()
-
-  //   return 'success delete transaction'
-  // }
-
+    return this.userRepository.softDelete(userToDelete.id);
+  }
 
 }

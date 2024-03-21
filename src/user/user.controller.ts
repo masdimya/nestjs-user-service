@@ -1,6 +1,10 @@
 import { Body, Controller, Delete, Get, Post, Put, Param } from '@nestjs/common';
 import {UserService} from './user.service'
 import { User as UserEntity } from './user.entity'
+import {userCreateDTO, userUpdateDTO} from './user.dto'
+import { DeleteResult } from 'typeorm';
+
+
 
 
 @Controller('users')
@@ -8,28 +12,40 @@ export class UserController {
   
   constructor(private userService: UserService) {}
 
-  // @Get()
-  // getTransaction(): Promise<TransactionEntity[]> {
-  //   return this.transactionService.findAll()
-  // }
+  @Get()
+  getAll(): Promise<UserEntity[]> {
+    return this.userService.findAll()
+  }
 
   @Post()
-  add(@Body() userData): Promise<UserEntity> {
+  add(@Body() userData: userCreateDTO): Promise<UserEntity> {
     return this.userService.create(userData)
   }
 
-  // @Delete(':id')
-  // deleteTransaction(@Param('id') id: number): Promise<String> {
-  //   return this.transactionService.delete(id)
-  // }
+  @Delete(':id')
+  deleteTransaction(@Param('id') id: number): Promise<DeleteResult> {
+    return this.userService.delete({
+      where:{
+        id: id
+      }
+    })
+  }
 
-  // @Put(':id')
-  // updateransaction(@Param('id') id: number, @Body() editTransactionDto: EditTransactionDto): Promise<String> {
-  //   return this.transactionService.update(id, editTransactionDto)
-  // }
+  @Put(':id')
+  updateransaction(@Param('id') id: number, @Body() editUserDto: userUpdateDTO): Promise<UserEntity> {
+    return this.userService.update({
+      where: {
+        id: id
+      }
+    }, editUserDto)
+  }
 
-  // @Get(':id')
-  // getTransactionById(@Param('id') id: number): Promise<TransactionEntity> {
-  //   return this.transactionService.findOne(id)
-  // }
+  @Get(':id')
+  getById(@Param('id') id: number): Promise<UserEntity> {
+    return this.userService.findOne({
+      where: {
+        id: id
+      }
+    })
+  }
 }

@@ -36,4 +36,14 @@ const UserSchema = z.object({
 });
 
 export const userCreateValidation = UserSchema.omit({ id: true })
+
+export const userUpdateValidation = UserSchema.pick({ 
+  name: true,
+  address: true, 
+  phone: true
+})
+
+
 export type  userCreateDTO = z.infer<typeof userCreateValidation>;
+export type  userUpdateDTO = z.infer<typeof userUpdateValidation>;
+
